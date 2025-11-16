@@ -1,0 +1,6 @@
+{
+  "version": 3,
+  "sources": [],
+  "sections": [
+    {"offset": {"line": 10, "column": 0}, "map": {"version":3,"sources":["file:///Users/yasuo/stock-project/frontend/pages/_app.tsx"],"sourcesContent":["import type { AppProps } from \"next/app\";\nimport { useEffect } from \"react\";\nimport \"../styles/globals.css\";\n\nexport default function App({ Component, pageProps }: AppProps) {\n  useEffect(() => {\n    // デフォルトでダークモードを有効化\n    document.documentElement.classList.add('dark');\n  }, []);\n\n  return <Component {...pageProps} />;\n}\n\n"],"names":[],"mappings":";;;;;AACA;;;;AAGe,SAAS,IAAI,EAAE,SAAS,EAAE,SAAS,EAAY;IAC5D,IAAA,gHAAS,EAAC;QACR,mBAAmB;QACnB,SAAS,eAAe,CAAC,SAAS,CAAC,GAAG,CAAC;IACzC,GAAG,EAAE;IAEL,qBAAO,qKAAC;QAAW,GAAG,SAAS;;;;;;AACjC","debugId":null}}]
+}
