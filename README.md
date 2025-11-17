@@ -1,6 +1,20 @@
 # 株価チャート分析アプリケーション
 
-このプロジェクトは、株価データを取得・表示し、OpenAI APIを使用して株価予測を行うアプリケーションです。
+このプロジェクトは、株価データを取得・表示し、OpenAI APIを使用して株価予測を行うWebアプリケーションです。
+
+## アーキテクチャ
+
+- **フロントエンド**: Next.js 16 (React 19) + TypeScript + Tailwind CSS
+- **バックエンド**: FastAPI (Python 3.11) + SQLite
+- **デプロイ**: Azure Container Apps (Docker)
+
+## 前提条件
+
+- Python 3.11以上
+- Node.js 20以上
+- npm または yarn
+- OpenAI APIキー
+- (Azureデプロイの場合) Azure CLI、Docker
 
 ## セットアップ
 
@@ -11,17 +25,21 @@ cd backend
 pip install -r requirements.txt
 ```
 
-### 2. OpenAI APIキーの設定
+#### 環境変数の設定
 
-`backend`ディレクトリに`.env`ファイルを作成し、以下の内容を追加してください：
+`backend/.env`ファイルを作成し、以下の内容を追加してください：
 
 ```bash
 OPENAI_API_KEY=your_openai_api_key_here
+CORS_ORIGINS=http://localhost:3000,http://192.168.1.15:3000,http://127.0.0.1:3000
 ```
 
-**注意**: `.env`ファイルは`.gitignore`に含まれているため、Gitにコミットされません。安全にAPIキーを管理できます。
+**注意**: 
+- `.env`ファイルは`.gitignore`に含まれているため、Gitにコミットされません
+- `CORS_ORIGINS`は、フロントエンドにアクセスするURLをカンマ区切りで指定します
+- ローカル開発では`http://localhost:3000`を含める必要があります
 
-### 3. バックエンドサーバーの起動
+#### バックエンドサーバーの起動
 
 ```bash
 cd backend
@@ -30,56 +48,149 @@ uvicorn main:app --reload
 
 バックエンドは `http://127.0.0.1:8000` で起動します。
 
-### 4. フロントエンドのセットアップ
+APIドキュメントは `http://127.0.0.1:8000/docs` で確認できます。
+
+### 2. フロントエンドのセットアップ
 
 ```bash
 cd frontend
 npm install
+```
+
+#### 環境変数の設定
+
+`frontend/.env.local`ファイルを作成し、以下の内容を追加してください：
+
+```bash
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+**注意**: 
+- `.env.local`ファイルは`.gitignore`に含まれているため、Gitにコミットされません
+- ローカル開発では`http://localhost:8000`を指定します
+- Azureのバックエンドに接続する場合は、AzureのバックエンドURLを指定します
+
+#### フロントエンドサーバーの起動
+
+```bash
+cd frontend
 npm run dev
 ```
 
 フロントエンドは `http://localhost:3000` で起動します。
+
+## ローカル開発の手順
+
+1. **バックエンドを起動**
+   ```bash
+   cd backend
+   uvicorn main:app --reload
+   ```
+
+2. **フロントエンドを起動**（別のターミナルで）
+   ```bash
+   cd frontend
+   npm run dev
+   ```
+
+3. **ブラウザでアクセス**
+   - フロントエンド: `http://localhost:3000`
+   - バックエンドAPI: `http://127.0.0.1:8000/docs`
 
 ## APIエンドポイント
 
 ### POST /download_stock
 株価データを取得します。
 
+**リクエストボディ**:
+```json
+{
+  "symbol": "AAPL",
+  "period": "1y"
+}
+```
+
+**レスポンス**:
+```json
+{
+  "symbol": "AAPL",
+  "data": [...],
+  "message": "株価データを取得しました"
+}
+```
+
 ### POST /predict
 OpenAI APIを使用して株価予測を行います。
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+**リクエストボディ**:
+```json
+{
+  "symbol": "AAPL",
+  "period": "1y"
+}
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**レスポンス**:
+```json
+{
+  "prediction": "予測結果のテキスト",
+  "symbol": "AAPL"
+}
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## デプロイメント
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### Azure Container Appsへのデプロイ
 
-## Learn More
+詳細なデプロイ手順は以下のドキュメントを参照してください：
 
-To learn more about Next.js, take a look at the following resources:
+- **バックエンド**: `AZURE_DOCKER_DEPLOYMENT.md`
+- **フロントエンド**: `frontend/DOCKER_DEPLOYMENT.md`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 環境変数のクイックリファレンス
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+環境変数の設定方法の詳細は `ENV_VARIABLES_QUICK_REFERENCE.md` を参照してください。
 
-## Deploy on Vercel
+## プロジェクト構造
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+stock-project/
+├── backend/              # FastAPIバックエンド
+│   ├── main.py          # メインアプリケーション
+│   ├── requirements.txt # Python依存関係
+│   ├── .env             # 環境変数（ローカル開発用）
+│   └── Dockerfile       # Dockerイメージ定義
+├── frontend/            # Next.jsフロントエンド
+│   ├── app/             # Next.js App Router
+│   ├── components/      # Reactコンポーネント
+│   ├── package.json     # Node.js依存関係
+│   ├── .env.local       # 環境変数（ローカル開発用）
+│   ├── Dockerfile       # Dockerイメージ定義
+│   └── nginx.conf       # Nginx設定（本番環境用）
+├── ENV_VARIABLES_QUICK_REFERENCE.md  # 環境変数リファレンス
+├── AZURE_DOCKER_DEPLOYMENT.md        # Azureデプロイガイド
+└── README.md            # このファイル
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# stock-web-project
+## トラブルシューティング
+
+### バックエンドに接続できない
+
+1. バックエンドが起動しているか確認（`http://127.0.0.1:8000/docs`にアクセス）
+2. `frontend/.env.local`の`NEXT_PUBLIC_API_URL`が正しいか確認
+3. バックエンドの`CORS_ORIGINS`にフロントエンドのURLが含まれているか確認
+
+### CORSエラーが発生する
+
+1. `backend/.env`の`CORS_ORIGINS`にフロントエンドのURLを追加
+2. バックエンドを再起動
+
+### 環境変数が読み込まれない
+
+1. `.env`ファイルが正しいディレクトリにあるか確認
+2. ファイル名が`.env`（バックエンド）または`.env.local`（フロントエンド）であるか確認
+3. サーバーを再起動
+
+## ライセンス
+
+このプロジェクトは個人利用・学習目的で作成されています。

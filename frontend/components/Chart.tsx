@@ -153,7 +153,6 @@ const Chart: React.FC<Props> = ({ rows, includeRsi = false, isLight = false, inc
       }
 
       // 要素がまだDOMに接続されているか確認
-      // @ts-expect-error isConnected
       if (!(el as any).isConnected) return;
       Plotly.react(el, traces, layout, { responsive: true });
     } catch (e) {
@@ -165,7 +164,6 @@ const Chart: React.FC<Props> = ({ rows, includeRsi = false, isLight = false, inc
     const handle = () => {
       try {
         if (!el) return;
-        // @ts-expect-error isConnected
         if (!(el as any).isConnected) return;
         Plotly.Plots.resize(el);
       } catch {}

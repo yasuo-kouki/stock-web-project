@@ -93,7 +93,7 @@ export default function StockChart() {
         const startDate = new Date(endDate);
         startDate.setFullYear(endDate.getFullYear() - 1);
         
-        const startIndex = fetchedData.findIndex(d => {
+        const startIndex = fetchedData.findIndex((d: StockData) => {
           const date = new Date(d.Date);
           return date >= startDate;
         });
@@ -378,7 +378,7 @@ export default function StockChart() {
         
         // 前日のデータを探す
         const previousDayIndices: number[] = [];
-        allData.forEach((d, index) => {
+        allData.forEach((d: StockData, index: number) => {
           const date = new Date(d.Date);
           if (date >= previousDay && date <= previousDayEnd) {
             previousDayIndices.push(index);
@@ -428,7 +428,7 @@ export default function StockChart() {
     }
     
     // 開始日と終了日のインデックスを取得
-    const startIndex = allData.findIndex(d => {
+    const startIndex = allData.findIndex((d: StockData) => {
       const date = new Date(d.Date);
       return date >= startDate;
     });

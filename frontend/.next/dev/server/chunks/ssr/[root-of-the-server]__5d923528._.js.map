@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 47, "column": 0}, "map": {"version":3,"sources":["file:///Users/yasuo/stock-project/frontend/pages/index.tsx"],"sourcesContent":["import StockChart from \"../components/StockChart\";\n\nexport default function Home() {\n  return <StockChart />;\n}"],"names":[],"mappings":";;;;;AAAA;;;;;;;AAEe,SAAS;IACtB,qBAAO,qKAAC,6HAAU;;;;;AACpB","debugId":null}}]
-}
